@@ -1,0 +1,49 @@
+name: calmyaab
+description: Pakistan's Student Career Platform
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navigation
+  go_router: ^13.0.0
+
+  # State Management
+  flutter_riverpod: ^2.5.0
+
+  # Firebase
+  firebase_core: ^3.0.0
+  firebase_auth: ^5.0.0
+  cloud_firestore: ^5.0.0
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+  # Animations
+  animate_do: ^3.3.4
+  visibility_detector: ^0.4.0+2
+
+  # Responsive
+  responsive_framework: ^1.4.0
+
+  # URL launcher
+  url_launcher: ^6.3.0
+
+  # SVG
+  flutter_svg: ^2.0.10
+
+  # Shared preferences
+  shared_preferences: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

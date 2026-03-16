@@ -1,0 +1,225 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_text_styles.dart';
+
+class CalmyaabNavbar extends StatefulWidget {
+  final ScrollController scrollController;
+  final GlobalKey heroKey;
+  final GlobalKey servicesKey;
+  final GlobalKey howKey;
+  final GlobalKey abroadKey;
+  final GlobalKey pricingKey;
+
+  const CalmyaabNavbar({
+    super.key,
+    required this.scrollController,
+    required this.heroKey,
+    required this.servicesKey,
+    required this.howKey,
+    required this.abroadKey,
+    required this.pricingKey,
+  });
+
+  @override
+  State<CalmyaabNavbar> createState() => _CalmyaabNavbarState();
+}
+
+class _CalmyaabNavbarState extends State<CalmyaabNavbar> {
+  bool _scrolled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final scrolled = widget.scrollController.offset > 40;
+    if (scrolled != _scrolled) setState(() => _scrolled = scrolled);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _scrollTo(GlobalKey key) {
+    final ctx = key.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(ctx,
+          duration: const Duration(milliseconds: 700), curve: Curves.easeInOut);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.of(context).size.width > 768;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: 70,
+      decoration: BoxDecoration(
+        color: _scrolled ? AppColors.black.withOpacity(0.96) : Colors.transparent,
+        border: Border(
+          bottom: BorderSide(
+            color: _scrolled ? AppColors.yellowBorder : Colors.transparent,
+            width: 1,
+          ),
+        ),
+        boxShadow: _scrolled
+            ? [BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 12)]
+            : [],
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 64 : 20),
+            child: Row(
+              children: [
+                // Logo
+                GestureDetector(
+                  onTap: () => _scrollTo(widget.heroKey),
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Text('CALMYAAB',
+                      style: GoogleFonts.bebasNeue(
+                          fontSize: 28, color: AppColors.yellow, letterSpacing: 2),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                if (isDesktop) ...[
+                  _NavLink(label: 'Services',     onTap: () => _scrollTo(widget.servicesKey)),
+                  const SizedBox(width: 32),
+                  _NavLink(label: 'How It Works', onTap: () => _scrollTo(widget.howKey)),
+                  const SizedBox(width: 32),
+                  _NavLink(label: 'Study Abroad', onTap: () => _scrollTo(widget.abroadKey)),
+                  const SizedBox(width: 32),
+                  _NavLink(label: 'Pricing',      onTap: () => _scrollTo(widget.pricingKey)),
+                  const SizedBox(width: 32),
+                  _LoginBtn(onTap: () => context.go('/login')),
+                  const SizedBox(width: 12),
+                  _RegisterBtn(onTap: () => context.go('/register')),
+                ] else ...[
+                  _LoginBtn(onTap: () => context.go('/login')),
+                  const SizedBox(width: 10),
+                  _RegisterBtn(onTap: () => context.go('/register')),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavLink extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+  const _NavLink({required this.label, required this.onTap});
+  @override
+  State<_NavLink> createState() => _NavLinkState();
+}
+
+class _NavLinkState extends State<_NavLink> {
+  bool _hovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit:  (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 180),
+          style: AppTextStyles.body(14,
+            color: _hovered ? AppColors.yellow : AppColors.gray,
+            weight: FontWeight.w500, letterSpacing: 0.3, height: 1),
+          child: Text(widget.label),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginBtn extends StatefulWidget {
+  final VoidCallback onTap;
+  const _LoginBtn({required this.onTap});
+  @override
+  State<_LoginBtn> createState() => _LoginBtnState();
+}
+
+class _LoginBtnState extends State<_LoginBtn> {
+  bool _hovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit:  (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: _hovered ? AppColors.yellow : AppColors.gray.withOpacity(0.4),
+              width: 1,
+            ),
+          ),
+          child: Text('Login',
+            style: AppTextStyles.body(14,
+              color: _hovered ? AppColors.yellow : AppColors.gray,
+              weight: FontWeight.w600, height: 1),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RegisterBtn extends StatefulWidget {
+  final VoidCallback onTap;
+  const _RegisterBtn({required this.onTap});
+  @override
+  State<_RegisterBtn> createState() => _RegisterBtnState();
+}
+
+class _RegisterBtnState extends State<_RegisterBtn> {
+  bool _hovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit:  (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+          decoration: BoxDecoration(
+            color: _hovered ? AppColors.yellowDark : AppColors.yellow,
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: _hovered
+                ? [BoxShadow(color: AppColors.yellow.withOpacity(0.3), blurRadius: 16, offset: const Offset(0, 4))]
+                : [],
+          ),
+          child: Text('Register',
+            style: AppTextStyles.body(14,
+              color: AppColors.black, weight: FontWeight.w700, height: 1),
+          ),
+        ),
+      ),
+    );
+  }
+}
