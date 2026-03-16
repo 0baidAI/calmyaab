@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../screens/landing/landing_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
+import '../../screens/dashboard/dashboard_screen.dart';
 
 // Auth guard: redirect to /login if not logged in
 String? _authGuard(BuildContext context, GoRouterState state) {
@@ -46,18 +47,10 @@ final appRouter = GoRouter(
 
     // ── Protected (auth required) ──────────────────────────────────────────
     GoRoute(
-      path: '/dashboard',
-      name: 'dashboard',
+       path: '/dashboard',
+       name: 'dashboard',
       redirect: _authGuard,
-      builder: (context, state) => const Scaffold(
-        backgroundColor: Color(0xFF0A0A0A),
-        body: Center(
-          child: Text(
-            'Dashboard coming soon!',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
+      builder: (context, state) => const DashboardScreen(),
     ),
 
   ],
