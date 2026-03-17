@@ -41,7 +41,9 @@ class AuthService {
         uid: cred.user!.uid,
         name: name.trim(), email: email.trim(),
         phone: phone.trim(), university: university.trim(),
-        field: field, paidServices: [], createdAt: DateTime.now(),
+        field: field,
+        role: 'student', // ← added
+        paidServices: [], createdAt: DateTime.now(),
       );
 
       await _db.collection('users').doc(cred.user!.uid).set(student.toMap());

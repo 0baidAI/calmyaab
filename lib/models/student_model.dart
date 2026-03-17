@@ -5,6 +5,7 @@ class StudentModel {
   final String phone;
   final String university;
   final String field;
+  final String role; // 'student' or 'admin'
   final List<String> paidServices;
   final DateTime createdAt;
 
@@ -15,6 +16,7 @@ class StudentModel {
     required this.phone,
     required this.university,
     required this.field,
+    required this.role,
     required this.paidServices,
     required this.createdAt,
   });
@@ -27,6 +29,7 @@ class StudentModel {
       phone: map['phone'] ?? '',
       university: map['university'] ?? '',
       field: map['field'] ?? '',
+      role: map['role'] ?? 'student',
       paidServices: List<String>.from(map['paid_services'] ?? []),
       createdAt: map['created_at'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['created_at'])
@@ -40,6 +43,7 @@ class StudentModel {
     'phone': phone,
     'university': university,
     'field': field,
+    'role': role,
     'paid_services': paidServices,
     'created_at': createdAt.millisecondsSinceEpoch,
   };
