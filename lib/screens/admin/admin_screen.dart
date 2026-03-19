@@ -10,11 +10,13 @@ import '../../providers/auth_provider.dart';
 import 'tabs/students_tab.dart';
 import 'tabs/cv_orders_tab.dart';
 import 'tabs/internships_admin_tab.dart';
-import 'tabs/abroad_bookings_tab.dart';
+import 'tabs/study_abroad_tab.dart';
 import 'tabs/revenue_tab.dart';
 import 'tabs/notifications_tab.dart';
 import 'tabs/team_tab.dart';
 import 'tabs/inbox_tab.dart';
+import 'tabs/partners_tab.dart';
+import 'tabs/applications_tab.dart';
 
 class AdminScreen extends ConsumerStatefulWidget {
   const AdminScreen({super.key});
@@ -34,8 +36,10 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
     _NavItem(icon: Icons.people_outline_rounded,  label: 'Students'),
     _NavItem(icon: Icons.description_outlined,    label: 'CV Orders'),
     _NavItem(icon: Icons.work_outline_rounded,    label: 'Internships'),
-    _NavItem(icon: Icons.flight_outlined,         label: 'Abroad Bookings'),
+    _NavItem(icon: Icons.flight_outlined,         label: 'Study Abroad'),
     _NavItem(icon: Icons.notifications_outlined,  label: 'Notifications'),
+    _NavItem(icon: Icons.business_outlined,       label: 'Partners'),
+    _NavItem(icon: Icons.folder_shared_outlined,  label: 'Applications'),
   ];
 
   final _superAdminNavItems = const [
@@ -82,22 +86,24 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
   }
 
   Future<void> _signOut() async {
-  await ref.read(studentProvider.notifier).signOut();
-  if (mounted) context.go('/admin-login');
+    await ref.read(studentProvider.notifier).signOut();
+    if (mounted) context.go('/admin-login');
   }
 
   Widget get _currentTab {
     final label = _navItems[_selectedIndex].label;
     switch (label) {
-      case 'Inbox':           return InboxTab(role: _role);
-      case 'Students':        return const StudentsTab();
-      case 'CV Orders':       return const CvOrdersTab();
-      case 'Internships':     return const InternshipsAdminTab();
-      case 'Abroad Bookings': return const AbroadBookingsTab();
-      case 'Notifications':   return const NotificationsTab();
-      case 'Revenue':         return const RevenueTab();
-      case 'Team':            return TeamTab(role: _role);
-      default:                return const StudentsTab();
+      case 'Inbox':         return InboxTab(role: _role);
+      case 'Students':      return const StudentsTab();
+      case 'CV Orders':     return const CvOrdersTab();
+      case 'Internships':   return const InternshipsAdminTab();
+      case 'Study Abroad': return StudyAbroadTab(role: _role);
+      case 'Notifications': return const NotificationsTab();
+      case 'Revenue':       return const RevenueTab();
+      case 'Team':          return TeamTab(role: _role);
+      case 'Partners':      return const PartnersTab();
+      case 'Applications':  return const ApplicationsTab();
+      default:              return const StudentsTab();
     }
   }
 
@@ -167,13 +173,11 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
           ..._navItems.asMap().entries.map((e) => ListTile(
             leading: Icon(e.value.icon,
                 color: _selectedIndex == e.key
-                    ? AppColors.yellow
-                    : AppColors.gray),
+                    ? AppColors.yellow : AppColors.gray),
             title: Text(e.value.label,
                 style: AppTextStyles.body(14,
                     color: _selectedIndex == e.key
-                        ? AppColors.yellow
-                        : AppColors.white)),
+                        ? AppColors.yellow : AppColors.white)),
             onTap: () {
               setState(() => _selectedIndex = e.key);
               Navigator.pop(context);
@@ -238,8 +242,7 @@ class _Sidebar extends StatelessWidget {
                 style: AppTextStyles.body(9,
                     color: Colors.redAccent,
                     weight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    height: 1),
+                    letterSpacing: 1.5, height: 1),
               ),
             ),
           ]),
@@ -305,11 +308,9 @@ class _InboxNavItemState extends State<_InboxNavItem> {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        widget.selected ? AppColors.yellow : AppColors.gray;
+    final color = widget.selected ? AppColors.yellow : AppColors.gray;
 
     return StreamBuilder<QuerySnapshot>(
-      // Listen to all chat docs where I am a participant
       stream: FirebaseFirestore.instance
           .collection('admin_chats')
           .where('participants', arrayContains: widget.currentUid)
@@ -358,7 +359,6 @@ class _InboxNavItemState extends State<_InboxNavItem> {
                                   : FontWeight.w400,
                               height: 1)),
                     ),
-                    // 🔴 Red dot when unread messages exist
                     if (unread > 0)
                       Container(
                         width: 8, height: 8,
@@ -423,9 +423,7 @@ class _SidebarItemState extends State<_SidebarItem> {
   Widget build(BuildContext context) {
     final color = widget.isDestructive
         ? Colors.redAccent
-        : widget.selected
-            ? AppColors.yellow
-            : AppColors.gray;
+        : widget.selected ? AppColors.yellow : AppColors.gray;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -441,14 +439,11 @@ class _SidebarItemState extends State<_SidebarItem> {
           decoration: BoxDecoration(
             color: widget.selected
                 ? AppColors.yellowDim
-                : _hovered
-                    ? AppColors.whiteDim2
-                    : Colors.transparent,
+                : _hovered ? AppColors.whiteDim2 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: widget.selected
-                  ? AppColors.yellowBorder
-                  : Colors.transparent,
+                  ? AppColors.yellowBorder : Colors.transparent,
             ),
           ),
           child: Row(children: [
@@ -458,8 +453,7 @@ class _SidebarItemState extends State<_SidebarItem> {
                 style: AppTextStyles.body(14,
                     color: color,
                     weight: widget.selected
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                        ? FontWeight.w600 : FontWeight.w400,
                     height: 1)),
           ]),
         ),
@@ -522,12 +516,10 @@ class _AdminTopBar extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               role == 'super_admin'
-                  ? 'Operations Head'
-                  : 'Admin Mode',
+                  ? 'Operations Head' : 'Admin Mode',
               style: AppTextStyles.body(12,
                   color: Colors.redAccent,
-                  weight: FontWeight.w600,
-                  height: 1),
+                  weight: FontWeight.w600, height: 1),
             ),
           ]),
         ),

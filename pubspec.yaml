@@ -6,9 +6,6 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-flutter_web_plugins:
-  sdk: flutter
-
 dependencies:
   flutter:
     sdk: flutter
@@ -23,6 +20,9 @@ dependencies:
   firebase_core: ^3.0.0
   firebase_auth: ^5.0.0
   cloud_firestore: ^5.0.0
+  
+  firebase_storage: 12.4.10
+  file_picker: ^6.2.1
 
   # Fonts
   google_fonts: ^6.2.1
@@ -35,7 +35,7 @@ dependencies:
   responsive_framework: ^1.4.0
 
   # URL launcher
-  url_launcher: ^6.3.0
+  url_launcher: 6.2.4
 
   # SVG
   flutter_svg: ^2.0.10

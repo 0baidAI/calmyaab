@@ -10,6 +10,7 @@ import 'tabs/internships_tab.dart';
 import 'tabs/cv_status_tab.dart';
 import 'tabs/study_abroad_tab.dart';
 import 'tabs/profile_tab.dart';
+import 'widgets/notifications_panel.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -114,8 +115,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                 OverviewTab(student: student, onTabChange: (i) => _tabController.animateTo(i)),
                 const InternshipsTab(),
                 const CvStatusTab(),
-                const StudyAbroadTab(),
-                ProfileTab(student: student, onSignOut: _signOut),
+                const StudyAbroadTab(role: 'student'),
+                ProfileTab(student: student, onSignOut: _signOut, onProfileUpdated: () => ref.read(studentProvider.notifier).refresh()),
               ],
             ),
           ),
@@ -174,7 +175,11 @@ class _DashboardTopBar extends StatelessWidget {
               Text('Welcome back, ${studentName.split(' ').first}! 👋',
                 style: AppTextStyles.body(14, color: AppColors.gray, height: 1),
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: 8),
+
+              // Notification bell
+              const NotificationBell(),
+              const SizedBox(width: 8),
 
               // Sign out
               _SignOutBtn(onTap: onSignOut),

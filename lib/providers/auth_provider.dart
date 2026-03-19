@@ -37,6 +37,13 @@ class StudentNotifier extends StateNotifier<AsyncValue<StudentModel?>> {
     await _authService.signOut();
     state = const AsyncValue.data(null);
   }
+
+  Future<void> refresh() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+    final result = await _authService.fetchStudent(uid);
+    if (result != null) state = AsyncValue.data(result);
+  }
 }
 
 final studentProvider = StateNotifierProvider<StudentNotifier, AsyncValue<StudentModel?>>(

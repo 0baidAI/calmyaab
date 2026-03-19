@@ -41,8 +41,7 @@ class AuthService {
         uid: cred.user!.uid,
         name: name.trim(), email: email.trim(),
         phone: phone.trim(), university: university.trim(),
-        field: field,
-        role: 'student', // ← added
+        field: field, city: '', role: 'student',
         paidServices: [], createdAt: DateTime.now(),
       );
 
